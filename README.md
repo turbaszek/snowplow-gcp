@@ -3,6 +3,7 @@
 **Table of Contents**
 
 - [Snowplow on GCP](#snowplow-on-gcp)
+  - [Prerequisites](#prerequisites)
   - [Infrastructure setup](#infrastructure-setup)
   - [Collector deployment](#collector-deployment)
   - [Stream enrich deployment](#stream-enrich-deployment)
@@ -24,6 +25,17 @@ After following all those steps you should have:
 - Pub/Sub topics for collector and enrich stream
 - BigQuery dataset being the final destination of Snowplow events
 - Few GCS buckets
+
+## Prerequisites
+
+This project uses [Terraform](https://www.terraform.io/downloads.html) to bootstrap the infrastructure and
+and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) to manage the Kubernetes cluster.
+On MacOS you should easily install them using [Homebrew](https://brew.sh):
+```bash
+brew install terraform
+brew install kubectl
+```
+For install option on other systems please check documentation of those projects.
 
 ## Infrastructure setup
 
@@ -57,7 +69,9 @@ https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-bigquery-des
 
 # Contributing
 
-We welcome all contributions! This project is using [pre-commits](https://pre-commit.com) to ensure the
+We welcome all contributions! Please submit an issue or PR no matter if it's bug or a typo.
+
+This project is using [pre-commits](https://pre-commit.com) to ensure the
 quality of the code. To install pre-commits just do:
 ```bash
 pip install pre-commit
