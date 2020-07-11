@@ -74,9 +74,20 @@ To get access to the newly create kubernetes cluster run
 gcloud container clusters get-credentials "snowplow-gke" --region ${LOCATION}
 ```
 
-Collector configuration requires user to provide GCP project id.
+Collector configuration requires user to provide GCP project id. You can do this running the following
+substitution:
+```bash
+sed -i "" "s/googleProjectId =.*/googleProjectId = ${PROJECT_ID}/" k8s/collector/conf.yaml
+```
 
-*TODO: This should be template using helm*
+Then deploy the following CRDs:
+```bash
+kubectl apply -f k8s/collector/conf.yaml
+kubectl apply -f k8s/collector/deploy.yaml
+kubectl apply -f k8s/collector/service.yaml
+```
+This will create `snowplow-collector` deployment which uses [official snowplow image](
+https://hub.docker.com/r/snowplow/scala-stream-collector-pubsub/tags)
 
 ## Stream enrich deployment
 Check [snowplow documentation](

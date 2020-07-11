@@ -133,7 +133,7 @@ data:
             enabled = google-pub-sub
 
             # Or Google Pubsub
-            googleProjectId = snowplow-4
+            googleProjectId = your-project
             ## Minimum, maximum and total backoff periods, in milliseconds
             ## and multiplier between two backoff
             backoffPolicy {
