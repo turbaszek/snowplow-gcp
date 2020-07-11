@@ -2,8 +2,11 @@
 
 set -eu
 
-PROJECT_ID="${@}"
-SNOWPLOW_ACCOUNT="${@:2}"
+# Arguments:
+# $1 - project id
+# $2 - name used to create service account
+PROJECT_ID=$1
+SNOWPLOW_ACCOUNT=$2
 
 if [[ "${PROJECT_ID}" == "" ]]; then
     echo "No project was specified. Please provide project id as first argument"
@@ -29,7 +32,7 @@ gcloud auth login
 gcloud config set project ${PROJECT_ID}
 
 set +e
-gcloud iam service-accounts create "${SNOWPLOW_ACCOUNT}" --display-name="snowplow-admin-test"
+gcloud iam service-accounts create "${SNOWPLOW_ACCOUNT}" --display-name="${SNOWPLOW_ACCOUNT}"
 gcloud iam service-accounts keys create "${SERVICE_KEY_PATH}" --iam-account="${SERVICE_MAIL}"
 set -e
 
@@ -41,9 +44,10 @@ gcloud projects add-iam-policy-binding "${PROJECT_ID}" --member "serviceAccount:
     --role roles/editor
 
 echo
-echo "Enabling services for ${SERVICE_MAIL} service account"
+echo "Enabling services for ${PROJECT_ID} project"
 echo
 
+set -x
 gcloud services enable compute.googleapis.com
 gcloud services enable servicenetworking.googleapis.com
 gcloud services enable cloudresourcemanager.googleapis.com

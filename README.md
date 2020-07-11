@@ -30,6 +30,9 @@ After following all those steps you should have:
 
 ## Prerequisites
 
+To manage GCP resources you have to have installed `gcloud` CLI. For installation options
+check the [official documentation](https://cloud.google.com/sdk/install).
+
 This project uses [Terraform](https://www.terraform.io/downloads.html) to bootstrap the infrastructure and
 and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) to manage the Kubernetes cluster.
 On MacOS you should easily install them using [Homebrew](https://brew.sh):
@@ -42,20 +45,23 @@ For install option on other systems please check documentation of those projects
 ## Infrastructure setup
 
 1. Create GCP project
-2. Once you have the project ready run the following script:
+
+1. Once you have the project ready run the following script:
     ```bash
     export PROJECT_ID=project-name-here
     export SERVICE_ACCOUNT_NAME=snowplow
     bash scripts/setup-iam.sh ${PROJECT_ID} ${SERVICE_ACCOUNT_NAME}
     ```
    This will create service account in `keys` directory. This service account will have `roles/editor` role.
-3. To bootstrap infrastructure required to run Snowplow run:
+
+1. To bootstrap infrastructure required to run Snowplow run:
     ```bash
-    export GCP_KEY=keys/{$SERVICE_ACCOUNT_NAME}.json
+    export GCP_KEY=keys/${SERVICE_ACCOUNT_NAME}.json
     export CLIENT=client-name
     terraform apply -var "gcp_project=${PROJECT_ID}" -var "gcp_key_admin=${GCP_KEY}" -var "client=${CLIENT}"
     ```
-   The `CLIENT` is a string that is added to all resources name.
+   The `CLIENT` is a string that is added to all resources name. It's recommended to use
+   terraform workspaces i.e. `terraform workspace new my_snowplow`.
 
 ## Collector deployment
 
