@@ -1,18 +1,18 @@
 variable "gcp_project" {}
+variable "gcp_location" {}
 variable "gcp_key_admin" {}
 variable "client" {}
 
 locals {
-  gcp_region = "europe-west3"
-  bq-loader  = "bq-loader"
-  collector  = "collector"
-  enrich     = "enrich"
+  bq-loader = "bq-loader"
+  collector = "collector"
+  enrich    = "enrich"
 }
 
 provider "google" {
   credentials = file(var.gcp_key_admin)
   project     = var.gcp_project
-  region      = local.gcp_region
+  region      = var.gcp_location
 }
 
 resource "random_string" "random" {
@@ -25,7 +25,7 @@ resource "random_string" "random" {
 
 resource "google_storage_bucket" "config" {
   name     = "config-${var.client}-${random_string.random.result}"
-  location = local.gcp_region
+  location = var.gcp_location
 
   bucket_policy_only = true
 
@@ -67,7 +67,7 @@ resource "google_bigquery_dataset" "dataset" {
   dataset_id    = local.datasetId
   friendly_name = "snowplow"
   description   = "Dataset used by Snowplow BigQuery loader."
-  location      = local.gcp_region
+  location      = var.gcp_location
 
   labels = {
     snowplow  = "true",
@@ -79,7 +79,7 @@ resource "google_bigquery_dataset" "dataset" {
 
 resource "google_container_cluster" "gke" {
   name               = "snowplow-gke"
-  location           = local.gcp_region
+  location           = var.gcp_location
   initial_node_count = 1
 
   master_auth {
@@ -95,6 +95,8 @@ resource "google_container_cluster" "gke" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
+      "https://www.googleapis.com/auth/pubsub",
+      "https://www.googleapis.com/auth/cloud-platform",
     ]
 
     metadata = {

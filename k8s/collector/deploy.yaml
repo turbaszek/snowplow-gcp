@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snowplow-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collector
+  template:
+    metadata:
+      labels:
+        app: collector
+        component: collector
+    spec:
+      containers:
+        - image: snowplow/scala-stream-collector-pubsub:1.0.1
+          imagePullPolicy: IfNotPresent
+          name: collector
+          env:
+            - name: SP_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+          args: ["--config", "/snowplow/customconfig/production.conf"]
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+          - name: collector-config
+            mountPath: /snowplow/customconfig
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
+      volumes:
+        - name: collector-config
+          configMap:
+            name: collector-config

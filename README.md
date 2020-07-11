@@ -56,24 +56,37 @@ For install option on other systems please check documentation of those projects
 
 1. To bootstrap infrastructure required to run Snowplow run:
     ```bash
+    export LOCATION=europe-west3
     export GCP_KEY=keys/${SERVICE_ACCOUNT_NAME}.json
     export CLIENT=client-name
-    terraform apply -var "gcp_project=${PROJECT_ID}" -var "gcp_key_admin=${GCP_KEY}" -var "client=${CLIENT}"
+    terraform apply -var "gcp_project=${PROJECT_ID}" -var "gcp_location=${LOCATION}" -var "gcp_key_admin=${GCP_KEY}" -var "client=${CLIENT}"
     ```
    The `CLIENT` is a string that is added to all resources name. It's recommended to use
    terraform workspaces i.e. `terraform workspace new my_snowplow`.
 
 ## Collector deployment
+Check [snowplow documentation](
+https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-the-snowplow-collector/).
 
-https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-the-snowplow-collector/
+
+To get access to the newly create kubernetes cluster run
+```bash
+gcloud container clusters get-credentials "snowplow-gke" --region ${LOCATION}
+```
+
+Collector configuration requires user to provide GCP project id.
+
+*TODO: This should be template using helm*
 
 ## Stream enrich deployment
+Check [snowplow documentation](
+https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-validation-and-enrich-beam-enrich/).
 
-https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-validation-and-enrich-beam-enrich/
 
 ## BigQuery loader deployment
+Check [snowplow documentation](
+https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-bigquery-destination/bigquery-loader-0-5-0/).
 
-https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-bigquery-destination/bigquery-loader-0-5-0/
 
 # Contributing
 
