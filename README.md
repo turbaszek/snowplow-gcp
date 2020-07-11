@@ -30,11 +30,11 @@ After following all those steps you should have:
 
 ## Prerequisites
 
-To manage GCP resources you have to have installed `gcloud` CLI. For installation options
+To manage GCP resources you need installed `gcloud` CLI. For installation options
 check the [official documentation](https://cloud.google.com/sdk/install).
 
 This project uses [Terraform](https://www.terraform.io/downloads.html) to bootstrap the infrastructure and
-and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) to manage the Kubernetes cluster.
+[kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) to manage the Kubernetes cluster.
 On MacOS you should easily install them using [Homebrew](https://brew.sh):
 ```bash
 brew install terraform
@@ -44,17 +44,18 @@ For install option on other systems please check documentation of those projects
 
 ## Infrastructure setup
 
-1. Create GCP project
+1. Create GCP project. You can also use already existing one.
 
-1. Once you have the project ready run the following script:
+1. Run the following commands:
     ```bash
     export PROJECT_ID=project-name-here
     export SERVICE_ACCOUNT_NAME=snowplow
     bash scripts/setup-iam.sh ${PROJECT_ID} ${SERVICE_ACCOUNT_NAME}
     ```
-   This will create service account in `keys` directory. This service account will have `roles/editor` role.
+   This will create service account in `keys` directory. This service account will have `roles/editor` role
+   and will be used to create GCP resources. This script will also enable required services (GKE).
 
-1. To bootstrap infrastructure required to run Snowplow run:
+1. To bootstrap infrastructure required for Snowplow deployment run:
     ```bash
     export LOCATION=europe-west3
     export GCP_KEY=keys/${SERVICE_ACCOUNT_NAME}.json
@@ -63,6 +64,9 @@ For install option on other systems please check documentation of those projects
     ```
    The `CLIENT` is a string that is added to all resources name. It's recommended to use
    terraform workspaces i.e. `terraform workspace new my_snowplow`.
+
+At this moment all required elements should be up and running. If you wish you can check this in
+[GCP console](https://console.cloud.google.com). In next steps you will deploy the Snowplow components.
 
 ## Collector deployment
 Check [snowplow documentation](
