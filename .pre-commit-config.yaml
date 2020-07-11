@@ -1,0 +1,47 @@
+---
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.3.0
+  hooks:
+  - id: end-of-file-fixer
+  - id: check-merge-conflict
+  - id: debug-statements
+  - id: detect-private-key
+  - id: end-of-file-fixer
+  - id: mixed-line-ending
+  - id: check-executables-have-shebangs
+  - id: trailing-whitespace
+#  - id: insert-license
+#    name: Add license for all yaml and tf files
+#    files: \.tf$|\.yaml$
+#    exclude: ^\.github/.*$
+#    args:
+#      - --comment-style
+#      - "|#|"
+#      - --license-filepath
+#      - license-templates/LICENSE.txt
+#      - --fuzzy-match-generates-todo
+#  - id: insert-license
+#    name: Add license for all md files
+#    files: \.md$
+#    exclude: ^\.github/.*$
+#    args:
+#      - --comment-style
+#      - "<!--|| -->"
+#      - --license-filepath
+#      - license-templates/LICENSE.txt
+#      - --fuzzy-match-generates-todo
+- repo: https://github.com/thlorenz/doctoc.git
+  rev: v1.4.0
+  hooks:
+    - id: doctoc
+      name: Add TOC for md files
+      files: ^README\.md$|^CONTRIBUTING\.md$
+      args:
+        - "--maxlevel"
+        - "2"
+- repo: git://github.com/antonbabenko/pre-commit-terraform
+  rev: v1.31.0
+  hooks:
+    - id: terraform_fmt
+    - id: terraform_docs
