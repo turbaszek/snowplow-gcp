@@ -46,8 +46,8 @@ For install option on other systems please check documentation of those projects
     export SERVICE_ACCOUNT_NAME=snowplow
     bash scripts/setup-iam.sh ${PROJECT_ID} ${SERVICE_ACCOUNT_NAME}
     ```
-   This will create service account in `kyes` directory. This service account will have `roles/editor` role.
-3. To bootstrap infrastructure reguired to run Snowplow run:
+   This will create service account in `keys` directory. This service account will have `roles/editor` role.
+3. To bootstrap infrastructure required to run Snowplow run:
     ```bash
     export GCP_KEY=keys/{$SERVICE_ACCOUNT_NAME}.json
     export CLIENT=client-name
