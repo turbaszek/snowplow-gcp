@@ -93,6 +93,17 @@ kubectl apply -f k8s/collector/service.yaml
 This will create `snowplow-collector` deployment which uses [official snowplow image](
 https://hub.docker.com/r/snowplow/scala-stream-collector-pubsub/tags)
 
+To check if the deployment works run
+```bash
+kubectl get pods -A | grep snowplow
+```
+and you should see few pods, all in `Running` state. To verify that everything works smoothly
+you can run health check script:
+```bash
+bash scripts/collector_health_check.sh
+```
+If there was no error, head to PubSub web console and you should observe some events after few seconds.
+
 ## Stream enrich deployment
 Check [snowplow documentation](
 https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-validation-and-enrich-beam-enrich/).
