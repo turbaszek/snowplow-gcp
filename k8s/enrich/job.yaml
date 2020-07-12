@@ -32,7 +32,6 @@ spec:
             - --enriched=projects/snowplow-4/topics/enriched-good
             - --bad=projects/snowplow-4/topics/enriched-bad
             - --enrichments=/snowplow/config/enrichment
-#            - --labels={"label": "value"}
           volumeMounts:
           - mountPath: /.config
             name: cache-volume
@@ -61,5 +60,5 @@ spec:
         - name: resolver
           configMap:
             name: enrich-resolver
-        - name: enrichment # This should be a PVC
+        - name: enrichment
           emptyDir: {}

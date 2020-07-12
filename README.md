@@ -109,10 +109,12 @@ some events in the `good` topic.
 Check [snowplow documentation](
 https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-validation-and-enrich-beam-enrich/).
 
-The next step is to start streaming job on Dataflow. To do this you will use one time kubernetes job.
+The next step is to start streaming job on [Google Dataflow](https://cloud.google.com/dataflow/)
+([Apache Beam](https://github.com/apache/beam)). To do this you will use one time
+[kubernetes job](https://kubernetes.io/docs/concepts/workloads/controllers/job/).
 
-Enrich configuration requires user to provide GCP project id. You can do this running the following
-substitution:
+But before that enrich configuration requires you to provide GCP project id. You can do this running the
+following substitution:
 ```bash
 sed -i "" "s/googleProjectId =.*/googleProjectId = ${PROJECT_ID}/" k8s/enrich/conf.yaml
 sed -i "" "s/\*PROJECT\*/${PROJECT_ID}/" k8s/enrich/job.yaml  # does not work
@@ -130,6 +132,12 @@ Once you configuration is ready run:
 kubectl apply -f k8s/enrich/conf.yaml
 kubectl apply -f k8s/enrich/job.yaml
 ```
+After few seconds run:
+```bash
+kubectl get jobs -A
+```
+and you should see that `snowplow-enrich` has completed.
+
 
 ## BigQuery loader deployment
 Check [snowplow documentation](
