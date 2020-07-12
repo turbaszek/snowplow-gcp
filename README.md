@@ -8,7 +8,7 @@
   - [Prerequisites](#prerequisites)
   - [Infrastructure setup](#infrastructure-setup)
   - [Collector deployment](#collector-deployment)
-  - [Stream enrich deployment](#stream-enrich-deployment)
+  - [Stream enrich job](#stream-enrich-job)
   - [BigQuery loader deployment](#bigquery-loader-deployment)
 - [Contributing](#contributing)
 
@@ -105,9 +105,11 @@ bash scripts/collector_health_check.sh
 If there was no error, head to PubSub web console and after few seconds you should observe
 some events in the `good` topic.
 
-## Stream enrich deployment
+## Stream enrich job
 Check [snowplow documentation](
 https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-validation-and-enrich-beam-enrich/).
+
+The next step is to start streaming job on Dataflow. To do this you will use one time kubernetes job.
 
 Enrich configuration requires user to provide GCP project id. You can do this running the following
 substitution:
@@ -120,10 +122,14 @@ Then we need a key to write to GCS:
 cp keys/snowplow-admin.json keys/credentials.json
 kubectl create secret generic gcs-writer-sa --from-file keys/credentials.json
 ```
-TODO: there should be key with limited scope.
+TODO: there should be key with limited scope - what scope?.
+TODO: some more configuration changes are needed
 
-This is like one time job that should be run.
-
+Once you configuration is ready run:
+```bash
+kubectl apply -f k8s/enrich/conf.yaml
+kubectl apply -f k8s/enrich/job.yaml
+```
 
 ## BigQuery loader deployment
 Check [snowplow documentation](

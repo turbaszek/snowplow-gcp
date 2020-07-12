@@ -1,18 +1,17 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: snowplow-enrich
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: enrich
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 180
   template:
     metadata:
       labels:
         app: enrich
         component: enrich
     spec:
+      restartPolicy: OnFailure
       containers:
         - image: snowplow/beam-enrich:1.2.3
           imagePullPolicy: IfNotPresent
