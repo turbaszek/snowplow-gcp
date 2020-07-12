@@ -87,7 +87,7 @@ resource "google_pubsub_topic" "enriched-bad" {
 }
 
 resource "google_pubsub_subscription" "snowplow-enrich" {
-  name  = "snowplow-enrich"
+  name  = "raw-good"
   topic = google_pubsub_topic.good.name
 
   labels = {

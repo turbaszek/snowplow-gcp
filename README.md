@@ -115,7 +115,7 @@ Enrich configuration requires user to provide GCP project id. You can do this ru
 substitution:
 ```bash
 sed -i "" "s/googleProjectId =.*/googleProjectId = ${PROJECT_ID}/" k8s/enrich/conf.yaml
-sed -i "" "s/\*PROJECT\*/${PROJECT_ID}/" k8s/enrich/deploy.yaml
+sed -i "" "s/\*PROJECT\*/${PROJECT_ID}/" k8s/enrich/job.yaml  # does not work
 ```
 Then we need a key to write to GCS:
 ```bash

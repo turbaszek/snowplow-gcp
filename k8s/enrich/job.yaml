@@ -28,7 +28,7 @@ spec:
             - --streaming=true
             - --zone=europe-west2-a
             - --gcpTempLocation=gs://temp-sink-test-lrehwygh/data-dump
-            - --raw=projects/snowplow-4/subscriptions/good
+            - --raw=projects/snowplow-4/subscriptions/raw-good
             - --enriched=projects/snowplow-4/topics/enriched-good
             - --bad=projects/snowplow-4/topics/enriched-bad
             - --enrichments=/snowplow/config/enrichment

@@ -7,7 +7,7 @@ data:
       enrich {
         streams {
           in {
-            # Stream/topic where the raw events to be enriched are located
+            # Topic where the raw events to be enriched are located
             raw = good
           }
           out {
@@ -56,7 +56,7 @@ data:
             timeLimit = 2000
           }
           # Used as the Google PubSub subscription name.
-          appName = "snowplow-enrich"
+          appName = snowplow-enrich
         }
         # Optional section for tracking endpoints
         # monitoring {
