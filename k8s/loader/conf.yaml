@@ -1,0 +1,30 @@
+kind: ConfigMap
+metadata:
+  name: bq-loader-conf
+apiVersion: v1
+data:
+  production.json: |-
+      {
+          "schema": "iglu:com.snowplowanalytics.snowplow.storage/bigquery_config/jsonschema/1-0-0",
+          "data": {
+              "name": "BigQuery loader",
+              "id": "34155d29-ee01-4075-b98a-c40b3323f0db",
+
+              "projectId": "snowplow-4",
+              "datasetId": "snowplow",
+              "tableId": "events",
+
+              "input": "enriched-good-sub",
+              "typesTopic": "bq-types",
+              "typesSubscription": "bq-types-sub",
+              "badRows": "bq-bad-rows",
+              "failedInserts": "bq-bad-inserts",
+
+              "load": {
+                  "mode": "STREAMING_INSERTS",
+                  "retry": false
+              },
+
+              "purpose": "ENRICHED_EVENTS"
+          }
+      }

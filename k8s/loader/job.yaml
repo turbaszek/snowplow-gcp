@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: snowplow-bq-loader
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 180
+  template:
+    metadata:
+      labels:
+        app: bq-loader
+        component: bq-loader
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - image: snowplow-docker-registry.bintray.io/snowplow/snowplow-bigquery-loader:0.5.1
+          imagePullPolicy: IfNotPresent
+          name: bq-loader
+          env:
+            - name: CONFIG
+              value: $(cat "/snowplow/customconfig/config/production.json" | base64 -w 0)
+            - name: RESOLVER
+              value: $(cat "/snowplow/customconfig/resolver/resolver.json" | base64 -w 0)
+          args:
+            - --config=$(CONFIG)
+            - --resolver=$(RESOLVER)
+          volumeMounts:
+          - name: conf
+            mountPath: /snowplow/customconfig/config
+          - name: resolver
+            mountPath: /snowplow/customconfig/resolver
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
+      volumes:
+        - name: conf
+          configMap:
+            name: bq-loader-conf
+        - name: resolver
+          configMap:
+            name: bq-loader-resolver

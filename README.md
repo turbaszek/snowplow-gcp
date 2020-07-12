@@ -143,6 +143,9 @@ and you should see that `snowplow-enrich` has completed.
 Check [snowplow documentation](
 https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-bigquery-destination/bigquery-loader-0-5-0/).
 
+https://discourse.snowplowanalytics.com/t/illegal-base64-character-when-running-bigquery-mutator-with-docker/3662
+
+
 
 # Contributing
 

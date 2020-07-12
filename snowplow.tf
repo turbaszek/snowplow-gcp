@@ -105,6 +105,75 @@ resource "google_pubsub_subscription" "snowplow-enrich" {
   }
 }
 
+# BigQuery loader subscriptions and topics
+# For more information check
+# https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-bigquery-destination/bigquery-loader-0-5-0/#topics-and-message-formats
+
+resource "google_pubsub_subscription" "enriched-good-sub" {
+  name  = "enriched-good-sub"
+  topic = google_pubsub_topic.enriched-good.name
+
+  labels = {
+    snowplow  = "true",
+    component = local.bq-loader,
+  }
+
+  # 20 minutes
+  message_retention_duration = "1200s"
+  retain_acked_messages      = true
+  ack_deadline_seconds       = 20
+
+  expiration_policy {
+    ttl = "300000.5s"
+  }
+}
+
+resource "google_pubsub_topic" "bq-types" {
+  name = "bq-types"
+
+  labels = {
+    snowplow  = "true",
+    component = local.bq-loader,
+  }
+}
+
+resource "google_pubsub_subscription" "bq-types-sub" {
+  name  = "bq-types-sub"
+  topic = google_pubsub_topic.bq-types.name
+
+  labels = {
+    snowplow  = "true",
+    component = local.bq-loader,
+  }
+
+  # 20 minutes
+  message_retention_duration = "1200s"
+  retain_acked_messages      = true
+  ack_deadline_seconds       = 20
+
+  expiration_policy {
+    ttl = "300000.5s"
+  }
+}
+
+resource "google_pubsub_topic" "bq-bad-rows" {
+  name = "bq-bad-rows"
+
+  labels = {
+    snowplow  = "true",
+    component = local.bq-loader,
+  }
+}
+
+resource "google_pubsub_topic" "bq-bad-inserts" {
+  name = "bq-bad-inserts"
+
+  labels = {
+    snowplow  = "true",
+    component = local.bq-loader,
+  }
+}
+
 ######## BigQuery
 
 locals {
