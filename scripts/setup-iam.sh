@@ -7,6 +7,7 @@ set -eu
 # $2 - name used to create service account
 PROJECT_ID=$1
 SNOWPLOW_ACCOUNT=$2
+KEYS_DIR="keys"
 
 if [[ "${PROJECT_ID}" == "" ]]; then
     echo "No project was specified. Please provide project id as first argument"
@@ -18,7 +19,7 @@ if [[ "${SNOWPLOW_ACCOUNT}" == "" ]]; then
     exit 1
 fi
 
-SERVICE_KEY_PATH="keys/${SNOWPLOW_ACCOUNT}.json"
+SERVICE_KEY_PATH="${KEYS_DIR}/${SNOWPLOW_ACCOUNT}.json"
 SERVICE_MAIL="${SNOWPLOW_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com"
 
 set -eu pi
@@ -32,6 +33,7 @@ gcloud auth login
 gcloud config set project ${PROJECT_ID}
 
 set +e
+mkdir "${KEYS_DIR}"
 gcloud iam service-accounts create "${SNOWPLOW_ACCOUNT}" --display-name="${SNOWPLOW_ACCOUNT}"
 gcloud iam service-accounts keys create "${SERVICE_KEY_PATH}" --iam-account="${SERVICE_MAIL}"
 set -e
