@@ -50,6 +50,7 @@ echo "Enabling services for ${PROJECT_ID} project"
 echo
 
 set -x
+gcloud services enable dataflow.googleapis.com
 gcloud services enable compute.googleapis.com
 gcloud services enable servicenetworking.googleapis.com
 gcloud services enable cloudresourcemanager.googleapis.com

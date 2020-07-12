@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snowplow-enrich
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: enrich
+  template:
+    metadata:
+      labels:
+        app: enrich
+        component: enrich
+    spec:
+      containers:
+        - image: snowplow/beam-enrich:1.2.3
+          imagePullPolicy: IfNotPresent
+          name: enrich
+          env:
+            - name: SP_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+          args:
+            - --config=/snowplow/customconfig/enricher/production.conf
+            - --resolver=/snowplow/customconfig/resolver/resolver.json
+            - --runner=DataFlowRunner
+            - --job-name=snowplow-enrich
+            - --project=snowplow-4
+            - --streaming=true
+            - --zone=europe-west2-a
+            - --gcpTempLocation=gs://temp-sink-test-lrehwygh/data-dump
+            - --raw=projects/snowplow-4/subscriptions/good
+            - --enriched=projects/snowplow-4/topics/enriched-good
+            - --bad=projects/snowplow-4/topics/enriched-bad
+            - --enrichments=/snowplow/config/enrichment
+#            - --labels={"label": "value"}
+          volumeMounts:
+          - mountPath: /.config
+            name: cache-volume
+          - name: "service-account"
+            mountPath: /snowplow/config
+          - name: conf
+            mountPath: /snowplow/customconfig/enricher
+          - name: resolver
+            mountPath: /snowplow/customconfig/resolver
+          - mountPath: /snowplow/config/enrichment
+            name: enrichment
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
+      volumes:
+        - name: cache-volume
+          emptyDir: {}
+        - name: "service-account"
+          secret:
+            secretName: gcs-writer-sa
+        - name: conf
+          configMap:
+            name: enrich-config
+        - name: resolver
+          configMap:
+            name: enrich-resolver
+        - name: enrichment # This should be a PVC
+          emptyDir: {}

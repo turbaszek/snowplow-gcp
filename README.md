@@ -91,7 +91,7 @@ kubectl apply -f k8s/collector/deploy.yaml
 kubectl apply -f k8s/collector/service.yaml
 ```
 This will create `snowplow-collector` deployment which uses [official snowplow image](
-https://hub.docker.com/r/snowplow/scala-stream-collector-pubsub/tags)
+https://hub.docker.com/r/snowplow/scala-stream-collector-pubsub/tags).
 
 To check if the deployment works run
 ```bash
@@ -102,11 +102,27 @@ you can run health check script:
 ```bash
 bash scripts/collector_health_check.sh
 ```
-If there was no error, head to PubSub web console and you should observe some events after few seconds.
+If there was no error, head to PubSub web console and after few seconds you should observe
+some events in the `good` topic.
 
 ## Stream enrich deployment
 Check [snowplow documentation](
 https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-validation-and-enrich-beam-enrich/).
+
+Enrich configuration requires user to provide GCP project id. You can do this running the following
+substitution:
+```bash
+sed -i "" "s/googleProjectId =.*/googleProjectId = ${PROJECT_ID}/" k8s/enrich/conf.yaml
+sed -i "" "s/\*PROJECT\*/${PROJECT_ID}/" k8s/enrich/deploy.yaml
+```
+Then we need a key to write to GCS:
+```bash
+cp keys/snowplow-admin.json keys/credentials.json
+kubectl create secret generic gcs-writer-sa --from-file keys/credentials.json
+```
+TODO: there should be key with limited scope.
+
+This is like one time job that should be run.
 
 
 ## BigQuery loader deployment

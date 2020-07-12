@@ -34,6 +34,18 @@ resource "google_storage_bucket" "config" {
   }
 }
 
+resource "google_storage_bucket" "sink" {
+  name     = "temp-sink-${var.client}-${random_string.random.result}"
+  location = var.gcp_location
+
+  bucket_policy_only = true
+
+  labels = {
+    snowplow  = "true",
+    component = local.enrich,
+  }
+}
+
 ######## Pub/Sub
 # Topics for the collector and enrich
 # https://github.com/snowplow/snowplow/wiki/GCP:-Setting-up-the-Scala-Stream-Collector
@@ -47,12 +59,49 @@ resource "google_pubsub_topic" "good" {
   }
 }
 
+resource "google_pubsub_topic" "enriched-good" {
+  name = "enriched-good"
+
+  labels = {
+    snowplow  = "true",
+    component = local.enrich,
+  }
+}
+
 resource "google_pubsub_topic" "bad" {
   name = "bad"
 
   labels = {
     snowplow  = "true",
     component = local.collector,
+  }
+}
+
+resource "google_pubsub_topic" "enriched-bad" {
+  name = "enriched-bad"
+
+  labels = {
+    snowplow  = "true",
+    component = local.enrich,
+  }
+}
+
+resource "google_pubsub_subscription" "snowplow-enrich" {
+  name  = "snowplow-enrich"
+  topic = google_pubsub_topic.good.name
+
+  labels = {
+    snowplow  = "true",
+    component = local.enrich,
+  }
+
+  # 20 minutes
+  message_retention_duration = "1200s"
+  retain_acked_messages      = true
+  ack_deadline_seconds       = 20
+
+  expiration_policy {
+    ttl = "300000.5s"
   }
 }
 

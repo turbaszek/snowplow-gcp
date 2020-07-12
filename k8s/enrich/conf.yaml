@@ -1,0 +1,105 @@
+kind: ConfigMap
+metadata:
+  name: enrich-config
+apiVersion: v1
+data:
+  production.conf: |-
+      enrich {
+        streams {
+          in {
+            # Stream/topic where the raw events to be enriched are located
+            raw = good
+          }
+          out {
+            # Topic where the events that were successfully enriched will end up
+            enriched = enriched_good
+            # Topic where the event that failed enrichment will be stored
+            bad = enriched_bad
+            # Topic where the pii tranformation events will end up
+            # pii = {{outPii}}
+            # How the output topic will be partitioned.
+            # Possible partition keys are: event_id, event_fingerprint, domain_userid, network_userid,
+            # user_ipaddress, domain_sessionid, user_fingerprint.
+            # Refer to https://github.com/snowplow/snowplow/wiki/canonical-event-model to know what the
+            # possible parittion keys correspond to.
+            # Otherwise, the partition key will be a random UUID.
+            # Note: Nsq does not make use of partition key.
+            partitionKey = user_fingerprint
+          }
+          sourceSink {
+            # 'googlepubsub' for reading / writing to a Google PubSub topic
+            enabled = google-pub-sub
+
+            # Or Google PubSub
+            googleProjectId = snowplow-4
+            ## Size of the subscriber thread pool
+            #threadPoolSize = 4
+            ## Minimum, maximum and total backoff periods, in milliseconds
+            ## and multiplier between two backoffs
+            #backoffPolicy {
+            #  minBackoff = {{enrichStreamsOutMinBackoff}}
+            #  maxBackoff = {{enrichStreamsOutMaxBackoff}}
+            #  totalBackoff = {{enrichStreamsOutTotalBackoff}} # must be >= 10000
+            #  multiplier = {{enrichStreamsOutTotalBackoff}}
+            #}
+          }
+          # After enrichment, events are accumulated in a buffer before being sent to Kinesis/Kafka.
+          # Note: Buffering is not supported by NSQ.
+          # The buffer is emptied whenever:
+          # - the number of stored records reaches recordLimit or
+          # - the combined size of the stored records reaches byteLimit or
+          # - the time in milliseconds since it was last emptied exceeds timeLimit when
+          #   a new event enters the buffer
+          buffer {
+            byteLimit = 1000000
+            recordLimit = 0 # Not supported by Kafka; will be ignored
+            timeLimit = 2000
+          }
+          # Used as the Google PubSub subscription name.
+          appName = "snowplow-enrich"
+        }
+        # Optional section for tracking endpoints
+        # monitoring {
+        #   snowplow {
+        #     collectorUri = "{{collectorUri}}"
+        #     collectorPort = 80
+        #     appId = {{enrichAppName}}
+        #     method = GET
+        #   }
+        # }
+      }
+---
+kind: ConfigMap
+metadata:
+  name: enrich-resolver
+apiVersion: v1
+data:
+  resolver.json: |-
+      {
+        "schema": "iglu:com.snowplowanalytics.iglu/resolver-config/jsonschema/1-0-1",
+        "data": {
+          "cacheSize": 500,
+          "repositories": [
+            {
+              "name": "Iglu Central",
+              "priority": 0,
+              "vendorPrefixes": [ "com.snowplowanalytics" ],
+              "connection": {
+                "http": {
+                  "uri": "http://iglucentral.com"
+                }
+              }
+            },
+            {
+              "name": "Iglu Central - GCP Mirror",
+              "priority": 1,
+              "vendorPrefixes": [ "com.snowplowanalytics" ],
+              "connection": {
+                "http": {
+                  "uri": "http://mirror01.iglucentral.com"
+                }
+              }
+            }
+          ]
+        }
+      }

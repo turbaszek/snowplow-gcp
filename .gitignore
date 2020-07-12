@@ -30,4 +30,5 @@ override.tf.json
 
 .idea/
 keys/
+files/
 license-templates/
