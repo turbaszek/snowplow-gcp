@@ -130,10 +130,10 @@ data:
             # Choose between kinesis, google-pub-sub, kafka, nsq, or stdout.
             # To use stdout, comment or remove everything in the "collector.streams.sink" section except
             # "enabled" which should be set to "stdout".
-            enabled =
+            enabled = google-pub-sub
 
             # Or Google Pubsub
-            googleProjectId = your-project
+            googleProjectId = snowplow-4
             ## Minimum, maximum and total backoff periods, in milliseconds
             ## and multiplier between two backoff
             backoffPolicy {

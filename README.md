@@ -125,7 +125,11 @@ cp keys/snowplow-admin.json keys/credentials.json
 kubectl create secret generic gcs-writer-sa --from-file keys/credentials.json
 ```
 TODO: there should be key with limited scope - what scope?.
+
 TODO: some more configuration changes are needed
+
+TODO: there are some dataflow limits per region?
+
 
 Once you configuration is ready run:
 ```bash
@@ -143,8 +147,28 @@ and you should see that `snowplow-enrich` has completed.
 Check [snowplow documentation](
 https://docs.snowplowanalytics.com/docs/setup-snowplow-on-gcp/setup-bigquery-destination/bigquery-loader-0-5-0/).
 
-https://discourse.snowplowanalytics.com/t/illegal-base64-character-when-running-bigquery-mutator-with-docker/3662
+Due to [this issue of BQ loader](https://discourse.snowplowanalytics.com/t/illegal-base64-character-when-running-bigquery-mutator-with-docker/3662)
+we have to build custom Docker image:
 
+TODO: adjust the values in entry point
+
+TODO: does it make sens to run this on kubernetes? The job doesn't end (probably bug)
+
+```bash
+docker build -t snowplow k8s/loader
+docker tag snowplow gcr.io/$PROJECT_ID/bq-loader:latest
+docker push gcr.io/$PROJECT_ID/bq-loader:latest
+```
+
+Once you have the image build you have to adjust `template.spec.image` value in `k8s/loader/job.yaml`.
+Then you can deploy the job:
+ ```bash
+kubectl apply -f k8s/loader/conf.yaml
+kubectl apply -f k8s/loader/job.yaml
+```
+
+TODO: does the BQ loader create table schema?
+https://discourse.snowplowanalytics.com/t/bigquery-loader-and-table-schema/4054
 
 
 # Contributing

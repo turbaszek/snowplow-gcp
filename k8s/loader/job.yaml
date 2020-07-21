@@ -4,7 +4,7 @@ metadata:
   name: snowplow-bq-loader
 spec:
   backoffLimit: 2
-  ttlSecondsAfterFinished: 180
+  ttlSecondsAfterFinished: 10
   template:
     metadata:
       labels:
@@ -13,17 +13,12 @@ spec:
     spec:
       restartPolicy: OnFailure
       containers:
-        - image: snowplow-docker-registry.bintray.io/snowplow/snowplow-bigquery-loader:0.5.1
+        - image: gcr.io/snowplow-4/bq-loader:latest
           imagePullPolicy: IfNotPresent
           name: bq-loader
-          env:
-            - name: CONFIG
-              value: $(cat "/snowplow/customconfig/config/production.json" | base64 -w 0)
-            - name: RESOLVER
-              value: $(cat "/snowplow/customconfig/resolver/resolver.json" | base64 -w 0)
           args:
-            - --config=$(CONFIG)
-            - --resolver=$(RESOLVER)
+            - "/snowplow/customconfig/config/production.json"
+            - "/snowplow/customconfig/resolver/resolver.json"
           volumeMounts:
           - name: conf
             mountPath: /snowplow/customconfig/config
