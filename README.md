@@ -28,6 +28,8 @@ After following all those steps you should have:
 - BigQuery dataset being the final destination of Snowplow events
 - Few GCS buckets
 
+**NOTE:** This project is still work in progress and some part may not work yet but **you are welcomed to help**!
+
 ## Prerequisites
 
 To manage GCP resources you need installed `gcloud` CLI. For installation options
