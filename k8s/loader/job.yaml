@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: snowplow-bq-loader
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 10
+  template:
+    metadata:
+      labels:
+        app: bq-loader
+        component: bq-loader
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - image: gcr.io/snowplow-4/bq-loader:latest
+          imagePullPolicy: IfNotPresent
+          name: bq-loader
+          args:
+            - "/snowplow/customconfig/config/production.json"
+            - "/snowplow/customconfig/resolver/resolver.json"
+          volumeMounts:
+          - name: conf
+            mountPath: /snowplow/customconfig/config
+          - name: resolver
+            mountPath: /snowplow/customconfig/resolver
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
+      volumes:
+        - name: conf
+          configMap:
+            name: bq-loader-conf
+        - name: resolver
+          configMap:
+            name: bq-loader-resolver

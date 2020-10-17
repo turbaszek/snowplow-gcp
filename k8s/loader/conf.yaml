@@ -1,0 +1,65 @@
+kind: ConfigMap
+metadata:
+  name: bq-loader-conf
+apiVersion: v1
+data:
+  production.json: |-
+      {
+          "schema": "iglu:com.snowplowanalytics.snowplow.storage/bigquery_config/jsonschema/1-0-0",
+          "data": {
+              "name": "BigQuery loader",
+              "id": "34155d29-ee01-4075-b98a-c40b3323f0db",
+
+              "projectId": "snowplow-4",
+              "datasetId": "snowplow",
+              "tableId": "events",
+
+              "input": "enriched-good-sub",
+              "typesTopic": "bq-types",
+              "typesSubscription": "bq-types-sub",
+              "badRows": "bq-bad-rows",
+              "failedInserts": "bq-bad-inserts",
+
+              "load": {
+                  "mode": "STREAMING_INSERTS",
+                  "retry": false
+              },
+
+              "purpose": "ENRICHED_EVENTS"
+          }
+      }
+---
+kind: ConfigMap
+metadata:
+  name: bq-loader-resolver
+apiVersion: v1
+data:
+  resolver.json: |-
+      {
+        "schema": "iglu:com.snowplowanalytics.iglu/resolver-config/jsonschema/1-0-1",
+        "data": {
+          "cacheSize": 500,
+          "repositories": [
+            {
+              "name": "Iglu Central",
+              "priority": 0,
+              "vendorPrefixes": [ "com.snowplowanalytics" ],
+              "connection": {
+                "http": {
+                  "uri": "http://iglucentral.com"
+                }
+              }
+            },
+            {
+              "name": "Iglu Central - GCP Mirror",
+              "priority": 1,
+              "vendorPrefixes": [ "com.snowplowanalytics" ],
+              "connection": {
+                "http": {
+                  "uri": "http://mirror01.iglucentral.com"
+                }
+              }
+            }
+          ]
+        }
+      }

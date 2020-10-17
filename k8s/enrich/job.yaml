@@ -26,7 +26,7 @@ spec:
             - --job-name=snowplow-enrich
             - --project=snowplow-4
             - --streaming=true
-            - --zone=europe-west2-a
+            - --region=europe-west1
             - --gcpTempLocation=gs://temp-sink-test-lrehwygh/data-dump
             - --raw=projects/snowplow-4/subscriptions/raw-good
             - --enriched=projects/snowplow-4/topics/enriched-good
